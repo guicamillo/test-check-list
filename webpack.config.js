@@ -15,7 +15,14 @@ module.exports = {
     },
     module: {
       loaders: [
-        { test: /\.js$/, exclude: /node_modules/, loader: 'babel'},
+        { 
+          test: /\.js$/, 
+          exclude: /node_modules/, 
+          loader: 'babel',
+          query: {
+              presets: ['es2015']
+          }
+        },
         { test: /\.png$/, loader: 'url?limit=100000' },
         { test: /\.jpg$/, loader: 'file' },
         { test: /\.gif$/, loader: 'file' },
