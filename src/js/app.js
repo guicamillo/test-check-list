@@ -1,11 +1,24 @@
-// import Firebase from 'firebase';
-import page from 'page';
-import index from './routes/index.js';
+import React from 'react'
+import { render } from 'react-dom'
+import configureStore from './store/configureStore'
+import { Provider } from 'react-redux'
+import { Router, Route, browserHistory } from 'react-router'
+import DevTools from './containers/DevTools'
+import ExpList from './containers/ExpListContainer'
 
-// const myRootRef = new Firebase('https://resplendent-inferno-8697.firebaseio.com');
+const store = configureStore({})
 
-//define routes and handlers
-page('/', index);
+let rootElement = document.getElementById('app_root')
 
-// start router
-page();
+render(
+  <Provider store={store}>
+    {/* empty div as only on child required and we need devtools */}
+    <div>
+      <Router history={browserHistory}>
+        <Route path="/" name="index" component={ExpList} />
+      </Router>
+      <DevTools />
+    </div>
+  </Provider>,
+  rootElement
+)

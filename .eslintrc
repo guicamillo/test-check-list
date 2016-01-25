@@ -1,9 +1,8 @@
 {
-  // http://eslint.org/docs/rules/
 
   "ecmaFeatures": {
     "arrowFunctions": true,                    // enable arrow functions
-    "binaryLiterals": false,                    // enable binary literals
+    "binaryLiterals": false,                   // enable binary literals
     "blockBindings": true,                     // enable let and const (aka block bindings)
     "classes": true,                           // enable classes
     "defaultParams": true,                     // enable default function parameters
@@ -15,20 +14,20 @@
     "objectLiteralDuplicateProperties": true,  // enable duplicate object literal properties in strict mode
     "objectLiteralShorthandMethods": true,     // enable object literal shorthand methods
     "objectLiteralShorthandProperties": true,  // enable object literal shorthand properties
-    "octalLiterals": false,                     // enable octal literals
-    "regexUFlag": false,                        // enable the regular expression u flag
-    "regexYFlag": false,                        // enable the regular expression y flag
+    "octalLiterals": false,                    // enable octal literals
+    "regexUFlag": false,                       // enable the regular expression u flag
+    "regexYFlag": false,                       // enable the regular expression y flag
     "restParams": true,                        // enable the rest parameters
     "spread": true,                            // enable the spread operator
     "superInFunctions": true,                  // enable super references inside of functions
     "templateStrings": true,                   // enable template strings
-    "unicodeCodePointEscapes": false,           // enable code point escapes
-    "globalReturn": false,                      // allow return statements in the global scope
-    "jsx": false                                // enable JSX
+    "unicodeCodePointEscapes": false,          // enable code point escapes
+    "globalReturn": false,                     // allow return statements in the global scope
+    "jsx": true                               // enable JSX
   },
 
   "env": {
-    "browser": true,     // browser global variables
+    "browser": true,      // browser global variables
     "node": false,        // Node.js global variables and Node.js-specific rules
     "amd": false,         // defines require() and define() as global variables as per the amd spec
     "mocha": false,       // adds all of the Mocha testing global variables
@@ -44,7 +43,7 @@
   },
 
   "plugins": [
-    "babel"
-    // e.g. "react" (must run `npm install eslint-plugin-react` first)
+    "babel",
+    "react"
   ]
 }

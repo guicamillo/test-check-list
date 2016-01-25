@@ -3,6 +3,7 @@ var autoprefixer = require('autoprefixer');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
+    devtool: 'source-map',
     entry: [
       './src/js/app.js',
       './src/css/app.css',
@@ -15,12 +16,12 @@ module.exports = {
     },
     module: {
       loaders: [
-        { 
-          test: /\.js$/, 
-          exclude: /node_modules/, 
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
           loader: 'babel',
           query: {
-              presets: ['es2015']
+              presets: ['react', 'es2015']
           }
         },
         { test: /\.png$/, loader: 'url?limit=100000' },
@@ -43,9 +44,10 @@ module.exports = {
       return [autoprefixer];
     },
     plugins: [
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin(),
       new ExtractTextPlugin('[name].css')
     ]
-
 };
