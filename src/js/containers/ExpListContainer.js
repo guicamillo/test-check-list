@@ -2,15 +2,13 @@ import React, { Component, PropTypes } from 'react'
 import { routeActions } from 'react-router-redux'
 import { connect } from 'react-redux';
 // import {
-//   safeDeleteTodo,
-//   safeUpdateTodo,
-//   addTodo,
-//   fetchTodos,
-//   setVisibilityFilter
-// } from '../actions';
+//   fetchExperiments,
+//   // setVisibilityFilter
+// } from '../actions/experiments';
 import { VisibilityFilters } from '../constants';
+import { ExpList } from '../components/ExpList';
 
-class ExpList extends Component {
+class ExpListScreen extends Component {
   constructor(props) {
     super(props)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
@@ -18,63 +16,63 @@ class ExpList extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props
-    // dispatch(fetchTodos())
+    // dispatch(fetchExperiments())
   }
 
   handleRefreshClick(e) {
     e.preventDefault()
 
     const { dispatch } = this.props
-    dispatch(fetchTodos())
-  }
-
-  renderExpItem (exp, index) {
-    return (
-      <a
-        hrer="#"
-        onClick={() => dispatch(routeActions.push(```/${exp_name}```))}
-        key={index}
-      >
-        {'hi exp'}
-      </a>
-    )
+    // dispatch(fetchExperiments())
   }
 
   render() {
     const { dispatch, visibleExperiments, visibilityFilter, isFetching } = this.props
 
     return (
-      <div>
-        {
-          visibleExperiments && visibleExperiments.map((exp, index) =>
-           this.renderExpItem(exp, index)
-          )
-        }
+      <div className="row">
+        <div className="small-6 columns">
 
-        {'hi again!'}
+          {isFetching && visibleExperiments.length === 0 &&
+            <h2>Loading...</h2>
+          }
 
-        {this.props.children}
+          {!isFetching && visibleExperiments.length === 0 &&
+            <h2>Empty.</h2>
+          }
+
+          {visibleExperiments.length > 0 &&
+            <div style={{ opacity: isFetching ? 0.5 : 1 }}>
+              <ExpList
+                experiments={visibleExperiments}
+              />
+            </div>
+          }
+
+        </div>
       </div>
     )
+
   }
 }
 
-// ExpList.propTypes = {
-//   didInvalidate: PropTypes.bool.isRequired,
-//   isFetching: PropTypes.bool.isRequired,
-//   visibleExperiments: PropTypes.arrayOf(PropTypes.shape({
-//     text: PropTypes.string.isRequired,
-//     completed: PropTypes.bool.isRequired,
-//     beeingProcessed: PropTypes.bool,
-//   })).isRequired,
-//   visibilityFilter: PropTypes.oneOf([
-//     'SHOW_ALL',
-//     'SHOW_COMPLETED',
-//     'SHOW_ACTIVE'
-//   ]).isRequired
-// }
+ExpListScreen.propTypes = {
+  didInvalidate: PropTypes.bool.isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  visibleExperiments: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+    completed: PropTypes.bool.isRequired,
+    beeingProcessed: PropTypes.bool,
+  })).isRequired,
+  visibilityFilter: PropTypes.oneOf([
+    'SHOW_ALL',
+    'SHOW_COMPLETED',
+    'SHOW_ACTIVE'
+  ]).isRequired
+}
 
-function selectTodos(experiments, filter) {
+function selectExperiments(experiments, filter) {
   switch (filter) {
     case VisibilityFilters.SHOW_ALL:
       return experiments
@@ -91,10 +89,10 @@ function select(state) {
   return {
     isFetching: state.experiments.isFetching,
     didInvalidate: state.experiments.didInvalidate,
-    visibleExperiments: selectTodos(state.experiments.items, state.visibilityFilter),
-    visibilityFilter: state.visibilityFilter
+    visibleExperiments: selectExperiments(state.experiments.items, state.experimentsVisibilityFilter),
+    visibilityFilter: state.experimentsVisibilityFilter
   }
 }
 
 // Wrap the component to inject dispatch and state into it
-export default connect(select)(ExpList)
+export default connect(select)(ExpListScreen)
