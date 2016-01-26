@@ -1,4 +1,4 @@
-import { putRecord, getRecord, deleteRecord, getAllRecords } from '../helpers/fetchTodos'
+import Experiment from '../models/experiment'
 
 /*
  * action types
@@ -6,7 +6,6 @@ import { putRecord, getRecord, deleteRecord, getAllRecords } from '../helpers/fe
 import {
   REQUEST_EXPERIMENTS,
   RECEIVE_EXPERIMENTS,
-  INVALIDATE_EXPERIMENTS,
   EXPERIMENTS_FAIL,
   ADD_EXPERIMENT,
   UPDATE_EXPERIMENT,
@@ -17,35 +16,35 @@ import {
 /*
  * action creators
  */
-function requestTodos() {
+function requestExperiments() {
   return {
     type: REQUEST_EXPERIMENTS
   }
 }
 
-function createTodo(todo) {
+function createExperiment(experiment) {
   return {
     type: ADD_EXPERIMENT,
-    todo: todo
+    experiment
   }
 }
 
-function updateTodo(todo, id) {
+function updateExperiment(experiment, id) {
   return {
     type: UPDATE_EXPERIMENT,
-    todo: todo,
+    experiment,
     receivedAt: Date.now()
   }
 }
 
-function receiveTodos(todos) {
+function receiveExperiments(experiments) {
   return {
     type: RECEIVE_EXPERIMENTS,
-    items: todos
+    items: experiments
   }
 }
 
-function notifyDeleteTodo(id) {
+function notifyDeleteExperiment(id) {
   return {
     type: DELETE_EXPERIMENT,
     id: id
@@ -56,108 +55,94 @@ export function setVisibilityFilter(filter) {
   return { type: SET_EXPERIMENT_VISIBILITY_FILTER, filter }
 }
 
-export function invalidateTodos() {
-  return {
-    type: INVALIDATE_EXPERIMENTS
-  }
-}
-
-export function addTodo(text) {
+export function addExperiment(name) {
   return (dispatch) => {
-    let todo = {
-      text,
-      completed: false,
+    let experiment = {
+      name,
       beeingProcessed: true,
     };
 
-    dispatch(createTodo(todo, null));
+    dispatch(createExperiment(experiment, null));
 
-    return dispatch(serverSyncTodo(todo, null))
+    return dispatch(serverSyncExperiment(experiment, null))
   }
 }
 
-function serverSyncTodo(data, id) {
+function serverSyncExperiment(data, id) {
   return dispatch => {
     return putRecord(data, id)
       .then((response) => {
-        let todo = response.data;
-        dispatch(updateTodo(todo, todo.id))
+        let experiment = response.data;
+        dispatch(updateExperiment(experiment, experiment.id))
       })
   }
 }
 
-function serverDeleteTodo(id) {
+function serverDeleteExperiment(id) {
   return dispatch => {
     return deleteRecord(id)
-      .then(() => dispatch(notifyDeleteTodo(id)))
+      .then(() => dispatch(notifyDeleteExperimento(id)))
   }
 }
 
-function todosFail(err) {
+function experimentsFail(err) {
   return {
-    type: TODOS_FAIL,
+    type: EXPERIMENTS_FAIL,
     error: err
   }
 }
 
-export function fetchTodos() {
+export function fetchExperiments() {
   return dispatch => {
-    dispatch(requestTodos())
-    return getAllRecords().then(
-      (response) => {
-        let todos = response.data;
-        dispatch(receiveTodos(todos))
-      },
+    dispatch(requestExperiments())
+    return Experiment.query().find().then(
+      (experiments) => dispatch(receiveExperiments(experiments)),
       (err) => {
         let body = err.data;
-        dispatch(todosFail(body))
+        dispatch(experimentsFail(body))
       }
     );
   }
 }
 
-function deleteTodo(id) {
+function deleteExperiment(id) {
   return (dispatch, getState) => {
-    let { todos } = getState(),
-      rawTodo = todos.items.find(item => item.id === id),
-      todo = Object.assign({}, rawTodo, {
+    let { experiments } = getState(),
+      rawExperiment = experiments.items.find(item => item.id === id),
+      experiment = Object.assign({}, rawExperiment, {
         beeingProcessed: true,
       });
 
-    dispatch(updateTodo(todo, id))
+    dispatch(updateExperiment(experiment, id))
 
-    return dispatch(serverDeleteTodo(id))
+    return dispatch(serverDeleteExperiment(id))
   }
 }
 
-export function safeDeleteTodo(id) {
+export function safeDeleteExperiment(id) {
   return (dispatch, getState) => {
-    let { todos: { items } } = getState(),
-      targetTodo = items.find(todo => todo.id === id);
+    let { experiments: { items } } = getState(),
+      targetExperiment = items.find(experiment => experiment.id === id);
 
-    if (!targetTodo.beeingProcessed) {
-      return dispatch(deleteTodo(id))
+    if (!targetExperiment.beeingProcessed) {
+      return dispatch(deleteExperiment(id))
     }
   }
 }
 
-export function safeUpdateTodo(id, data) {
+export function safeUpdateExperiment(id, data) {
   return (dispatch, getState) => {
-    if (data.isEditing) {
-      return dispatch(updateTodo(data, id))
-    }
+    let { experiments: { items } } = getState(),
+      targetExperiment = items.find(experiment => experiment.id === id);
 
-    let { todos: { items } } = getState(),
-      targetTodo = items.find(todo => todo.id === id);
-
-    if (!targetTodo.beeingProcessed) {
-      let todo = Object.assign({}, targetTodo, data, {
+    if (!targetExperiment.beeingProcessed) {
+      let experiment = Object.assign({}, targetExperiment, data, {
         beeingProcessed: true,
       });
 
-      dispatch(updateTodo(todo, id))
+      dispatch(updateExperiment(experiment, id))
 
-      return dispatch(serverSyncTodo(todo, id))
+      return dispatch(serverSyncExperiment(experiment, id))
     }
   }
 }

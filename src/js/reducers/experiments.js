@@ -23,30 +23,23 @@ function experimentsVisibilityFilter(state = SHOW_ALL, action) {
 function experiments(
   state = {
     isFetching: true,
-    didInvalidate: false,
     items: []
   }, action) {
   switch (action.type) {
-    case INVALIDATE_EXPERIMENTS:
-      return Object.assign({}, state, {
-        didInvalidate: true
-      })
     case REQUEST_EXPERIMENTS:
-      return REQUEST_TESTS.assign({}, state, {
-        isFetching: true,
-        didInvalidate: false
+      return Object.assign({}, state, {
+        isFetching: true
       })
     case RECEIVE_EXPERIMENTS:
       return Object.assign({}, state, {
         isFetching: false,
-        didInvalidate: false,
         items: action.items,
         lastUpdated: action.receivedAt
       })
     case UPDATE_EXPERIMENT:
       let newItems = state.items.map(item => {
         if (item.id === action.id) {
-          return action.test
+          return action.experiment
         }
         return item;
       });
@@ -57,17 +50,15 @@ function experiments(
     case ADD_EXPERIMENT:
       return Object.assign({}, state, {
         isFetching: false,
-        didInvalidate: false,
         items: [
           ...state.items,
-          action.test,
+          action.experiment,
         ]
       })
     case DELETE_EXPERIMENT:
       return Object.assign({}, state, {
         isFetching: false,
-        didInvalidate: false,
-        items: state.items.filter(item => item.id !== action.id)
+        items: state.items.filter(experiment => experiment.id !== action.id)
       })
     default:
       return state

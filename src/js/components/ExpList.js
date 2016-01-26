@@ -1,26 +1,40 @@
 import React, { Component, PropTypes } from 'react'
+import { routeActions } from 'react-router-redux'
+
+window.ol = routeActions
 
 class ExpList extends Component {
+  constructor () {
+    super()
+    this.renderExpItem = this.renderExpItem.bind(this)
+  }
 
-  renderExpItem (experiment, index) {
+  renderExpItem (experiment) {
+    const { dispatch } = this.props
+
     return (
-      <a
-        hrer="#"
-        onClick={() => dispatch(routeActions.push(```/${experiment.name}```))}
-        key={index}
+      <li
+        key={experiment.id}
       >
-        {'hi exp'}
-      </a>
+        <a
+          href="#"
+          className="simple-link"
+          onClick={() => dispatch(routeActions.push(`/${experiment.get('name')}`))}
+        >
+          {experiment.get('name')}
+        </a>
+      </li>
     )
   }
 
   render() {
+    const { dispatch } = this.props
+
     return (
       <div>
-        <h3>Todos:</h3>
         <ul className="no-list-styling">
           {this.props.experiments.map((experiment, index) =>
-            this.renderTodoItem(experiment, index)
+            this.renderExpItem(experiment)
           )}
         </ul>
       </div>
@@ -29,12 +43,7 @@ class ExpList extends Component {
 }
 
 ExpList.propTypes = {
-  experiments: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired,
-    beeingProcessed: PropTypes.bool,
-  }).isRequired).isRequired
+  experiments: PropTypes.array.isRequired
 }
 
 export default ExpList

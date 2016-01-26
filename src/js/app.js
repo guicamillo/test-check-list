@@ -4,7 +4,9 @@ import configureStore from './store/configureStore'
 import { Provider } from 'react-redux'
 import { Router, Route, browserHistory } from 'react-router'
 import DevTools from './containers/DevTools'
-import ExpListScreen from './containers/ExpListContainer'
+import ExpListScreen from './containers/ExpListScreen'
+
+import Experiment from './models/experiment'
 
 const store = configureStore({})
 

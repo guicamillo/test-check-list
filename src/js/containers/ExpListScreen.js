@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import { routeActions } from 'react-router-redux'
 import { connect } from 'react-redux';
-// import {
-//   fetchExperiments,
-//   // setVisibilityFilter
-// } from '../actions/experiments';
+import {
+  fetchExperiments,
+  // setVisibilityFilter
+} from '../actions/experiments';
 import { VisibilityFilters } from '../constants';
-import { ExpList } from '../components/ExpList';
+import ExpList from '../components/ExpList';
 
 class ExpListScreen extends Component {
   constructor(props) {
@@ -16,14 +16,14 @@ class ExpListScreen extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props
-    // dispatch(fetchExperiments())
+    dispatch(fetchExperiments())
   }
 
   handleRefreshClick(e) {
     e.preventDefault()
 
     const { dispatch } = this.props
-    // dispatch(fetchExperiments())
+    dispatch(fetchExperiments())
   }
 
   render() {
@@ -45,6 +45,7 @@ class ExpListScreen extends Component {
             <div style={{ opacity: isFetching ? 0.5 : 1 }}>
               <ExpList
                 experiments={visibleExperiments}
+                dispatch={dispatch}
               />
             </div>
           }
@@ -57,14 +58,8 @@ class ExpListScreen extends Component {
 }
 
 ExpListScreen.propTypes = {
-  didInvalidate: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
-  visibleExperiments: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired,
-    beeingProcessed: PropTypes.bool,
-  })).isRequired,
+  visibleExperiments: PropTypes.array.isRequired,
   visibilityFilter: PropTypes.oneOf([
     'SHOW_ALL',
     'SHOW_COMPLETED',
