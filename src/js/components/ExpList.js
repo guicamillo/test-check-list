@@ -19,7 +19,7 @@ class ExpList extends Component {
         <a
           href="#"
           className="simple-link"
-          onClick={() => dispatch(routeActions.push(`/${experiment.get('name')}`))}
+          onClick={() => dispatch(routeActions.push(`/${experiment.id}`))}
         >
           {experiment.get('name')}
         </a>

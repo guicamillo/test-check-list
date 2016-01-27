@@ -1,14 +1,12 @@
 import React, { Component, PropTypes } from 'react'
-import { routeActions } from 'react-router-redux'
 import { connect } from 'react-redux';
 import {
   fetchExperiments,
   // setVisibilityFilter
 } from '../actions/experiments';
 import { VisibilityFilters } from '../constants';
-import ExpList from '../components/ExpList';
 
-class ExpListScreen extends Component {
+class ExpDetailsScreen extends Component {
   constructor(props) {
     super(props)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
@@ -27,28 +25,23 @@ class ExpListScreen extends Component {
   }
 
   render() {
-    const { dispatch, visibleExperiments, visibilityFilter, isFetching } = this.props
+    const { dispatch, experiment, isFetching } = this.props
 
     return (
       <div className="row">
         <div className="small-6 columns">
 
-          {isFetching && visibleExperiments.length === 0 &&
+          {isFetching &&
             <h2>Loading...</h2>
           }
 
-          {!isFetching && visibleExperiments.length === 0 &&
+          {!isFetching &&
             <h2>None created.</h2>
           }
 
-          {visibleExperiments.length > 0 &&
-            <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-              <ExpList
-                experiments={visibleExperiments}
-                dispatch={dispatch}
-              />
-            </div>
-          }
+          <div style={{ opacity: isFetching ? 0.5 : 1 }}>
+            { experiment }
+          </div>
 
         </div>
       </div>
@@ -57,15 +50,15 @@ class ExpListScreen extends Component {
   }
 }
 
-ExpListScreen.propTypes = {
-  isFetching: PropTypes.bool.isRequired,
-  visibleExperiments: PropTypes.array.isRequired,
-  visibilityFilter: PropTypes.oneOf([
-    'SHOW_ALL',
-    'SHOW_COMPLETED',
-    'SHOW_ACTIVE'
-  ]).isRequired
-}
+// ExpDetailsScreen.propTypes = {
+//   isFetching: PropTypes.bool.isRequired,
+//   visibleExperiments: PropTypes.array.isRequired,
+//   visibilityFilter: PropTypes.oneOf([
+//     'SHOW_ALL',
+//     'SHOW_COMPLETED',
+//     'SHOW_ACTIVE'
+//   ]).isRequired
+// }
 
 function selectExperiments(experiments, filter) {
   switch (filter) {
@@ -80,8 +73,9 @@ function selectExperiments(experiments, filter) {
 
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
-function select(state) {
+function select(state, ownProps) {
   return {
+    experiment: ownProps.params.expId,
     isFetching: state.experiments.isFetching,
     visibleExperiments: selectExperiments(state.experiments.items, state.experimentsVisibilityFilter),
     visibilityFilter: state.experimentsVisibilityFilter
@@ -89,4 +83,4 @@ function select(state) {
 }
 
 // Wrap the component to inject dispatch and state into it
-export default connect(select)(ExpListScreen)
+export default connect(select)(ExpDetailsScreen)
